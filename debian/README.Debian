@@ -1,0 +1,7 @@
+ttymidi for Debian
+-----------------
+
+The Debian version of this package has a few additional postinst scripts to
+properly set-up MIDI for a Raspberry PI serial port.
+
+ -- Ludovic <ldrolez@debian.org>  Mon, 20 Feb 2023 16:06:24 +0100
