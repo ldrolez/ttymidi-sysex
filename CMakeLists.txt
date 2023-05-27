@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.13)
 project(ttymidi-rpi)
 
 # Sources
@@ -10,3 +10,6 @@ find_library(ASOUND_LIB NAMES asound REQUIRED)
 # Build
 add_executable(ttymidi ${sources})
 target_link_libraries(ttymidi PRIVATE asound pthread)
+
+# Install
+install(TARGETS ttymidi DESTINATION bin)

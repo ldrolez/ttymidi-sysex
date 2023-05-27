@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: ttymidi
-Upstream-Contact: Daniel Golle @dangowrt on Github
-Source: https://github.com/dangowrt/ttymidi-sysex
+Upstream-Contact: Ludovic Drolez @ldrolez on Github
+Source: https://github.com/ldrolez/ttymidi-sysex
 
 Files: *
 Copyright: 2014 by Johnty Wang johntywang@infusionsystems.com

@@ -2,7 +2,7 @@ Source: ttymidi
 Section: sound
 Priority: optional
 Maintainer: Ludovic Drolez <ldrolez@debian.org>
-Build-Depends: debhelper-compat (= 13), libasound2-dev, cmake (>= 3.18)
+Build-Depends: debhelper-compat (= 13), libasound2-dev, cmake (>= 3.13)
 Standards-Version: 4.5.1
 Homepage: https://github.com/ldrolez/ttymidi-sysex
 Rules-Requires-Root: no
