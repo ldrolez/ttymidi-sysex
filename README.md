@@ -1,5 +1,10 @@
 # ttymidi-sysex
-New version of ttymidi handling midi and bi-directional sysex messages
+New version of ttymidi with 
+ * handling of MIDI and bi-directional SYSEX messages.
+ * Debian packaging for the Raspberry PI with configuration of the ttymidi service 
+ * boot configuration for serial based MIDI ports
+
+## history
 
 	*new* by cchaussat
 	Original ttymidi source code v0.60 (from Feb. 1st 2012)
