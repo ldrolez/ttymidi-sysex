@@ -4,6 +4,14 @@ New version of ttymidi with
  * Debian packaging for the Raspberry PI with configuration of the ttymidi service 
  * boot configuration for serial based MIDI ports
 
+## Compatible MIDI interfaces
+This utility is useful with any MIDI interface attached to your Raspberry GPIO ports (14 and 15) for example:
+ * [Zynthian Kit](https://zynthian.org/#hardware)
+ * [ClumsyMIDI](https://github.com/gmcn42/clumsyMIDI/)
+ * [OSA MIDI board](https://www.osaelectronics.com/product/midi-board-for-raspberry-pi/)
+ * [Domoshop SLIM MIDI boards](https://domoshop.eu/collections/music/raspberry)
+
+
 ## history
 
 	*new* by cchaussat
