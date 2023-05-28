@@ -217,15 +217,23 @@ int open_seq(snd_seq_t** seq)
 	}
 
 	snd_seq_set_client_name(*seq, arguments.name);
+	
+	char nameInput[MAX_DEV_STR_LEN];
+	strcpy(nameInput, arguments.name);
+	strcat(nameInput, " In");
 
-	if ((port_out_id = snd_seq_create_simple_port(*seq, "MIDI out",
+	if ((port_out_id = snd_seq_create_simple_port(*seq, nameInput,
 					SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
 					SND_SEQ_PORT_TYPE_MIDI_GENERIC|SND_SEQ_PORT_TYPE_APPLICATION)) < 0)  // *new*
 	{
 		fprintf(stderr, "Error creating sequencer MIDI out port.\n");  // *new*
 	}
+	
+	char nameOutput[MAX_DEV_STR_LEN];
+	strcpy(nameInput, arguments.name);
+	strcat(nameInput, " Out");
 
-	if ((port_in_id = snd_seq_create_simple_port(*seq, "MIDI in",
+	if ((port_in_id = snd_seq_create_simple_port(*seq, nameOutput,
 					SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
 					SND_SEQ_PORT_TYPE_MIDI_GENERIC|SND_SEQ_PORT_TYPE_APPLICATION)) < 0)  // *new*
 	{
