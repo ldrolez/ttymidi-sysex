@@ -191,7 +191,7 @@ void arg_set_defaults(arguments_t *arguments)
 	arguments->silent       = 0;
 	arguments->verbose      = 0;
 	arguments->baudrate     = B115200;
-	char *name_tmp		= (char *)"ttymidi";
+	char *name_tmp		= (char *)"MIDI";
 	strncpy(arguments->serialdevice, serialdevice_temp, MAX_DEV_STR_LEN);
 	strncpy(arguments->name, name_tmp, MAX_DEV_STR_LEN);
 }
@@ -230,8 +230,8 @@ int open_seq(snd_seq_t** seq)
 	}
 	
 	char nameOutput[MAX_DEV_STR_LEN];
-	strcpy(nameInput, arguments.name);
-	strcat(nameInput, " Out");
+	strcpy(nameOutput, arguments.name);
+	strcat(nameOutput, " Out");
 
 	if ((port_in_id = snd_seq_create_simple_port(*seq, nameOutput,
 					SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,

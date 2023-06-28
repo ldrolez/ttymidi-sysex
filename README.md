@@ -11,6 +11,15 @@ This utility is useful with any MIDI interface attached to your Raspberry GPIO p
  * [OSA MIDI board](https://www.osaelectronics.com/product/midi-board-for-raspberry-pi/)
  * [Domoshop SLIM MIDI boards](https://domoshop.eu/collections/music/raspberry)
 
+## How to check that the service is running properly?
+After installing the .deb, and rebooting the PI to make sure that the right kernel overlays are loaded, type 'aconnect -l'.
+You should see 3 lines related to ttymidi:
+
+``
+client 128: 'MIDI' [type=user,pid=1271]
+    0 'MIDI In         '
+    1 'MIDI Out        '
+``
 
 ## history
 

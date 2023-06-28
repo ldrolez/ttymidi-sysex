@@ -1,3 +1,9 @@
+ttymidi (0.20230628) experimental; urgency=low
+
+  * Port name fixes
+
+ -- Ludovic Drolez <ldrolez@debian.org>  Wed, 28 Jun 2023 20:36:48 +0100
+
 ttymidi (0.20230220) experimental; urgency=low
 
   * Initial Release.
