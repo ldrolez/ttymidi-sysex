@@ -1,3 +1,10 @@
+ttymidi (0.20231106) experimental; urgency=medium
+
+  * changed the defaults for the Raspberry
+  * try to handle serial errors
+
+ -- Ludovic Drolez <ldrolez@debian.org>  Mon, 06 Nov 2023 17:26:53 +0000
+
 ttymidi (0.20230628) experimental; urgency=low
 
   * Port name fixes
