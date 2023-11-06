@@ -87,6 +87,7 @@
 #include <linux/serial.h>
 #include <linux/ioctl.h>
 #include <asm/ioctls.h>
+#include <time.h>
 
 #define FALSE               0
 #define TRUE                1
@@ -186,11 +187,11 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 
 void arg_set_defaults(arguments_t *arguments)
 {
-	char *serialdevice_temp = "/dev/ttyUSB0";
+	char *serialdevice_temp = "/dev/serial0";
 	arguments->printonly    = 0;
 	arguments->silent       = 0;
 	arguments->verbose      = 0;
-	arguments->baudrate     = B115200;
+	arguments->baudrate     = B38400;
 	char *name_tmp		= (char *)"MIDI";
 	strncpy(arguments->serialdevice, serialdevice_temp, MAX_DEV_STR_LEN);
 	strncpy(arguments->name, name_tmp, MAX_DEV_STR_LEN);
@@ -697,11 +698,17 @@ void* read_midi_from_serial_port(void* seq)
 {
 	unsigned char buf[BUF_SIZE], msg[MAX_MSG_SIZE];  // *new*
 	int i, msglen, bytesleft;  // *new* (buflen in JW's code not used)
+        struct timespec u10ms;
+  
+        /* set-up a small sleep in case fo error to avoid cpu hungry loops */
+        u10ms.tv_sec  = 0;
+        u10ms.tv_nsec = 10000000L;
 
 	/* Lets first fast forward to first status byte... */
 	if (!arguments.printonly) {
 		do {
-			read(serial, buf, 1);
+			int ret = read(serial, buf, 1);
+			if (ret == 0) { nanosleep(&u10ms, NULL); continue; }
 			buf[0] = buf[0] & 0xFF;  // *new* &0xFF (protection ?)
 		}
 		while (buf[0] >> 7 == 0);
@@ -731,7 +738,14 @@ void* read_midi_from_serial_port(void* seq)
 		bytesleft = BUF_SIZE - 1;  // *new*
 
 		while (i < bytesleft) {  // *new*
-			read(serial, buf+i, 1);
+			int ret = read(serial, buf+i, 1);
+                        if (ret==0) { 
+                                /* serial error somewhere */
+                                printf("SerialIn error %02X %d %d\n", buf[0], ret, errno);
+                                nanosleep(&u10ms, NULL);
+                                bytesleft = 0;
+                                break;
+                        }
 			buf[i] = buf[i] & 0xFF;  // *new* &0xFF (protection ?)
 
 			if (buf[i] >> 7 != 0) {
