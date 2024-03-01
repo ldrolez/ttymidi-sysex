@@ -21,7 +21,16 @@ client 128: 'MIDI' [type=user,pid=1271]
     1 'MIDI Out        '
 ```
 
-## history
+## Still cannot receive and send MIDI messages on your Raspberry PI?
+
+This ttymidi-rpi package takes care of adding the right lines to cmdline.txt and config.txt, but in doubt, please check the content of the files.
+
+   * /boot/cmdline.txt: should not have any console=serialx or console=ttySx keywords
+   * /boot/config.txt: should contain dtoverlay=midi-uart0 and dtoverlay=miniuart-bt
+
+For MIDI scripting I recommend using [Python MIDO](https://mido.readthedocs.io/en/stable/) which is packaged for Debian.
+
+## History
 
 	*new* by cchaussat
 	Original ttymidi source code v0.60 (from Feb. 1st 2012)
