@@ -1,4 +1,4 @@
-# ttymidi-sysex
+# ttymidi-sysex for the Raspberry PIs
 New version of ttymidi with 
  * handling of MIDI and bi-directional SYSEX messages.
  * Debian packaging for the Raspberry PI with configuration of the ttymidi service 
