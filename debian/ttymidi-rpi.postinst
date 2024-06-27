@@ -22,7 +22,7 @@ case "$1" in
     configure)
 	#if dpkg --compare-versions "${2}" lt "20160321"; then
 	echo "Adjusting cmdline.txt..."
-        sed -e "s|console=serial.||;s|console=ttyS.||;" -i /boot/cmdline.txt || echo "Failed"
+        sed -e "s|console=serial[0-9][^ ]*||;s|console=ttyS[0-9][^ ]*||;" -i /boot/cmdline.txt || echo "Failed"
 	echo "Adjusting config.txt..."
 	CONFIG=/boot/config.txt
 	raspi-config nonint set_config_var enable_uart 1 $CONFIG
