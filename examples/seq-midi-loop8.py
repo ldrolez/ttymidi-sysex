@@ -79,11 +79,11 @@ def handle_outport(outport, msg_deque, clock_queue):
                     note_on = msg_deque[note_num]
                     print("Sending:", note_num, note_on)
                     outport.send(note_on)  # Send the note on to the outport
-                    time.sleep(clock_s/4)  # Wait a little
+                    time.sleep(clock_s/8)  # Wait a little
                     # build the note off message
                     note_off = mido.Message('note_off', note=note_on.note, velocity=0, channel=note_on.channel)
                     outport.send(note_off)  # Send the message to the outport
-                    seq = seq + 1                    
+                    seq = seq + 1
                 clock_queue.task_done()  # Mark the task as done
         except queue.Empty:
             continue  # Continue if the queue is empty
