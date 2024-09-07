@@ -21,10 +21,14 @@ set -e
 case "$1" in
     configure)
 	#if dpkg --compare-versions "${2}" lt "20160321"; then
+	BOOT=/boot
+	if [ -f /boot/firmware/config.txt ]; then
+		BOOT=/boot/firmware
+	fi
 	echo "Adjusting cmdline.txt..."
-        sed -e "s|console=serial[0-9][^ ]*||;s|console=ttyS[0-9][^ ]*||;" -i /boot/cmdline.txt || echo "Failed"
+        sed -e "s|console=serial[0-9][^ ]*||;s|console=ttyS[0-9][^ ]*||;" -i $BOOT/cmdline.txt || echo "Failed"
 	echo "Adjusting config.txt..."
-	CONFIG=/boot/config.txt
+	CONFIG=$BOOT/config.txt
 	raspi-config nonint set_config_var enable_uart 1 $CONFIG
 	if ! grep -q '^dtoverlay=midi-uart0' $CONFIG ; then
 		sed $CONFIG -i -e 's/\[all\]/\[all\]\ndtoverlay=midi-uart0/'

@@ -10,6 +10,7 @@ Rules-Requires-Root: no
 Package: ttymidi-rpi
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: python3-mido, python3-rtmidi
 Description: Raspberry serial MIDI shield support for Alsa
  If you have a serial MIDI shield for your Raspberry PI
  this package will configure the ttymidi daemon to link

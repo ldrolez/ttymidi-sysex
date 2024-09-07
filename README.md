@@ -23,12 +23,12 @@ client 128: 'MIDI' [type=user,pid=1271]
 
 ## Still cannot receive and send MIDI messages on your Raspberry PI?
 
-This ttymidi-rpi package takes care of adding the right lines to cmdline.txt and config.txt, but in doubt, please check the content of the files.
+This ttymidi-rpi package takes care of adding the right lines to cmdline.txt and config.txt, but in doubt, please check the content of the files. On latest Debian releases, the files are in /boot/firmware/, not in /boot/.
 
-   * /boot/cmdline.txt: should not have any `console=serialx` or `console=ttySx` keywords
-   * /boot/config.txt: should contain `dtoverlay=midi-uart0` and `dtoverlay=miniuart-bt`
+   * /boot/firmware/cmdline.txt: should not have any `console=serialx` or `console=ttySx` keywords
+   * /boot/firmware/config.txt: should contain `dtoverlay=midi-uart0` and `dtoverlay=miniuart-bt`
 
-In recent Debian versions (>= 12), it seems that the `'enable_uart=1'` option does more harm than good. I advise you to delete `enable_uart=1` in /boot/config.txt, and keep the two `dtoverlay` lines.
+In recent Debian versions (>= 12), it seems that the `'enable_uart=1'` option does more harm than good. I advise you to delete `enable_uart=1` in /boot/config.txt, and keep the two `dtoverlay` lines, at least on RPI Zero (Ok on RPI 4B).
 
 For MIDI scripting I recommend using [Python MIDO](https://mido.readthedocs.io/en/stable/) which is packaged for Debian.
 

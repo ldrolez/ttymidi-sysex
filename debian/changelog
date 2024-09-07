@@ -1,3 +1,11 @@
+ttymidi (0.20240907) experimental; urgency=medium
+
+  * Added example MIDO Python scripts
+  * Handle boot files in /boot/firmware
+  * Recommends: python3-rtmidi and python3-mido to run the examples
+
+ -- Ludovic Drolez <ldrolez@debian.org>  Sat, 07 Sep 2024 12:00:25 +0000
+
 ttymidi (0.20231106) experimental; urgency=medium
 
   * changed the defaults for the Raspberry
