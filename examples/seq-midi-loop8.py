@@ -10,6 +10,8 @@ Functions:
 - handle_outport: Retrieves MIDI messages from a queue and sends them to the output port.
 - handle_clock: Handles clock messages and compute the current quarter note time.
 
+For a live demo: https://youtu.be/OAWIxYuygxU
+
 """
 
 import mido
