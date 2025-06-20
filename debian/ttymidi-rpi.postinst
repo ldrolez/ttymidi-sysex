@@ -33,6 +33,7 @@ case "$1" in
 	if ! grep -q '^dtoverlay=midi-uart0' $CONFIG ; then
 		sed $CONFIG -i -e 's/\[all\]/\[all\]\ndtoverlay=midi-uart0/'
 		sed $CONFIG -i -e 's/\[all\]/\[all\]\ndtoverlay=miniuart-bt/'
+		sed $CONFIG -i -e 's/\[all\]/\[all\]\ndtoverlay=midi-uart0-pi5/'
 	fi
 	touch /var/run/reboot-required
     ;;
