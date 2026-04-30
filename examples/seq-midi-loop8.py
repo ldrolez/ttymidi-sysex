@@ -33,13 +33,14 @@ last_time = None
 inport = mido.open_input('MIDI In')
 outport = mido.open_output('MIDI Out')
 
-def handle_inport(inport, msg_deque, clock_queue):
+def handle_inport(inport, msg_deque, clock_queue, pending_queue):
     """
     Reads MIDI messages from the input port and places them in the queue.
 
     Args:
     inport (mido.ports.BaseInput): The input port to read messages from.
-    msg_queue (queue.Queue): The queue to put received messages in.
+    msg_deque (collections.deque): The deque for the active loop.
+    pending_queue (queue.Queue): The queue to buffer notes until loop boundary.
 
     Returns:
     None
@@ -49,19 +50,20 @@ def handle_inport(inport, msg_deque, clock_queue):
         for msg in inport.iter_pending():
             if msg.type == "note_on":
                 print("Received:", msg, msg.type)
-                msg_deque.append(msg)  # Append the message to the deque
-                print("Deque:", list(msg_deque))
+                pending_queue.put(msg)
+                print("Pending:", pending_queue.qsize())
             if msg.type == "clock" or msg.type == "start" or msg.type == "stop":
                 handle_clock(msg, clock_queue)
 
-def handle_outport(outport, msg_deque, clock_queue):
+def handle_outport(outport, msg_deque, clock_queue, pending_queue):
     """
     Continuously tries to retrieve messages from the msg_queue.
     Sends the retrieved messages to the outport.
     
     Args:
     outport (mido.ports.BaseInput): The output port to write messages to.
-    msg_queue (queue.Queue): The queue to get received messages in.
+    msg_deque (collections.deque): The deque for the active loop.
+    pending_queue (queue.Queue): The queue buffering notes until loop boundary.
 
     Returns:
     None    
@@ -75,6 +77,16 @@ def handle_outport(outport, msg_deque, clock_queue):
             # wait for a quarter note. 24 clocks per beat
             if msg % (24/4) == 0:
                 l = len(msg_deque)
+                # At loop boundary or deque empty — flush pending notes
+                if (l > 0 and seq % l == 0) or l == 0:
+                    while not pending_queue.empty():
+                        try:
+                            msg_deque.append(pending_queue.get_nowait())
+                        except queue.Empty:
+                            break
+                    l = len(msg_deque)
+                    if l > 0:
+                        seq = 0
                 # if the queue is not empty start to iterate
                 if l > 0:
                     note_num = (1+seq) % l
@@ -120,13 +132,14 @@ def main():
     global inport, outport
 
     clock_queue = queue.Queue()
+    pending_queue = queue.Queue()
 
     # Thread to handle input and put messages in the queue
-    inport_thread = threading.Thread(target=handle_inport, args=(inport, msg_deque, clock_queue))
+    inport_thread = threading.Thread(target=handle_inport, args=(inport, msg_deque, clock_queue, pending_queue))
     inport_thread.daemon = True
 
     # Thread to handle output and get messages from the queue
-    outport_thread = threading.Thread(target=handle_outport, args=(outport, msg_deque, clock_queue))
+    outport_thread = threading.Thread(target=handle_outport, args=(outport, msg_deque, clock_queue, pending_queue))
     outport_thread.daemon = True
 
     # Start the threads
