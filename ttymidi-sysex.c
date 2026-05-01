@@ -469,7 +469,8 @@ void write_midi_action_to_serial_port(snd_seq_t* seq_handle)
 
 	do
 	{
-		snd_seq_event_input(seq_handle, &ev);
+		int rc = snd_seq_event_input(seq_handle, &ev);
+		if (rc <= 0) break;
 
 		switch (ev->type)
 		{
@@ -546,6 +547,7 @@ void write_midi_action_to_serial_port(snd_seq_t* seq_handle)
 			case SND_SEQ_EVENT_SYSEX:  // *new*
 				sysex_len = ev->data.ext.len;
 				if (sysex_len > (int)sizeof(sysex_data)) sysex_len = sizeof(sysex_data);
+				if (ev->data.ext.ptr == NULL) sysex_len = 0;
 				if (!arguments.silent && arguments.verbose) printf("Alsa    F0 Sysex len = %04X   ", sysex_len);
 				int i;
 				for (i=0; i<sysex_len; i++) {
@@ -682,6 +684,7 @@ void* read_midi_from_alsa(void* seq)
 	seq_handle = seq;
 
 	npfd = snd_seq_poll_descriptors_count(seq_handle, POLLIN);
+	if (npfd <= 0) return NULL;
 	pfd = (struct pollfd*) alloca(npfd * sizeof(struct pollfd));
 	snd_seq_poll_descriptors(seq_handle, pfd, npfd, POLLIN);
 
