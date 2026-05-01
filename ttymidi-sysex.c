@@ -99,7 +99,7 @@
 /* change this definition for the correct port */
 //#define _POSIX_SOURCE 1 /* POSIX compliant source */
 
-int run;
+volatile sig_atomic_t run;
 int serial;
 int port_out_id;
 
@@ -151,11 +151,13 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 			break;
 		case 's':
 			if (arg == NULL) break;
-			strncpy(arguments->serialdevice, arg, MAX_DEV_STR_LEN);
+			strncpy(arguments->serialdevice, arg, MAX_DEV_STR_LEN - 1);
+			arguments->serialdevice[MAX_DEV_STR_LEN - 1] = '\0';
 			break;
 		case 'n':
 			if (arg == NULL) break;
-			strncpy(arguments->name, arg, MAX_DEV_STR_LEN);
+			strncpy(arguments->name, arg, MAX_DEV_STR_LEN - 1);
+			arguments->name[MAX_DEV_STR_LEN - 1] = '\0';
 			break;
 		case 'b':
 			if (arg == NULL) break;
@@ -173,6 +175,7 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 					case 115200 : arguments->baudrate = B115200; break;
 					default: printf("Baud rate %i is not supported.\n",baud_temp); exit(1);
 				}
+			break;
 
 		case ARGP_KEY_ARG:
 		case ARGP_KEY_END:
@@ -219,9 +222,8 @@ int open_seq(snd_seq_t** seq)
 
 	snd_seq_set_client_name(*seq, arguments.name);
 	
-	char nameInput[MAX_DEV_STR_LEN];
-	strcpy(nameInput, arguments.name);
-	strcat(nameInput, " In");
+	char nameInput[MAX_DEV_STR_LEN + 4];
+	snprintf(nameInput, sizeof(nameInput), "%s In", arguments.name);
 
 	if ((port_out_id = snd_seq_create_simple_port(*seq, nameInput,
 					SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
@@ -230,9 +232,8 @@ int open_seq(snd_seq_t** seq)
 		fprintf(stderr, "Error creating sequencer MIDI out port.\n");  // *new*
 	}
 	
-	char nameOutput[MAX_DEV_STR_LEN];
-	strcpy(nameOutput, arguments.name);
-	strcat(nameOutput, " Out");
+	char nameOutput[MAX_DEV_STR_LEN + 5];
+	snprintf(nameOutput, sizeof(nameOutput), "%s Out", arguments.name);
 
 	if ((port_in_id = snd_seq_create_simple_port(*seq, nameOutput,
 					SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
@@ -463,7 +464,7 @@ void write_midi_action_to_serial_port(snd_seq_t* seq_handle)
 {
 	snd_seq_event_t* ev;
 	unsigned char bytes[] = {0x00, 0x00, 0xFF};  // *new*
-	unsigned char sysex_data[256];  // *new*
+	unsigned char sysex_data[BUF_SIZE];  // *new*
 	int sysex_len = 0;  // *new*
 
 	do
@@ -544,6 +545,7 @@ void write_midi_action_to_serial_port(snd_seq_t* seq_handle)
 
 			case SND_SEQ_EVENT_SYSEX:  // *new*
 				sysex_len = ev->data.ext.len;
+				if (sysex_len > (int)sizeof(sysex_data)) sysex_len = sizeof(sysex_data);
 				if (!arguments.silent && arguments.verbose) printf("Alsa    F0 Sysex len = %04X   ", sysex_len);
 				int i;
 				for (i=0; i<sysex_len; i++) {
@@ -739,7 +741,7 @@ void* read_midi_from_serial_port(void* seq)
 
 		while (i < bytesleft) {  // *new*
 			int ret = read(serial, buf+i, 1);
-                        if (ret==0) { 
+                        if (ret<=0) { 
                                 /* serial error somewhere */
                                 printf("SerialIn error %02X %d %d\n", buf[0], ret, errno);
                                 nanosleep(&u10ms, NULL);
@@ -796,12 +798,15 @@ void* read_midi_from_serial_port(void* seq)
 			msglen = buf[0];
 			if (msglen > MAX_MSG_SIZE-1) msglen = MAX_MSG_SIZE-1;
 
-			read(serial, msg, msglen);
+			int got = 0;
+			while (got < msglen) {
+				int ret = read(serial, msg + got, msglen - got);
+				if (ret <= 0) break;
+				got += ret;
+			}
+			msg[got] = '\0';
 
 			if (arguments.silent) continue;
-
-			/* make sure the string ends with a null character */
-			msg[msglen] = 0;
 
 			printf("Serial  FF Text len = %04X    %s\n", msglen, msg);  // *new*
 			fflush(stdout);
