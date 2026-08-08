@@ -37,6 +37,10 @@ Check your kernel version with `uname -a`. And update if needed to 6.12.32 with 
 
 For MIDI scripting I recommend using [Python MIDO](https://mido.readthedocs.io/en/stable/) which is packaged for Debian.
 
+## Image builder
+
+Pre-built Debian images are available in Github releases for quick testing. But, you can also build your own image from scratch using the script in the 'build-img' directory. Follow the instructions in the README.md.MIDI configuration with the Raspberry PI can be tricky, so you're best option is to always start with a properly configured image, test with the example Python scripts, and after, build something more complicated.
+
 ## History
 
 	*new* by cchaussat
