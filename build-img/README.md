@@ -18,7 +18,7 @@ pre-installed and configured for serial MIDI over GPIO.
 ### Running the build
 
 ```sh
-bash build.sh
+sudo bash build.sh
 ```
 
 The script will decompress the base image, mount its partitions, inject
